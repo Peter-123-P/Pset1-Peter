@@ -1,7 +1,9 @@
 #include <string>
 #include <cassert>
 #include <iostream>
-using namespace std;
+using std::cout;
+using std::endl;
+using std::string;
 
 class BrowserHistory 
 {

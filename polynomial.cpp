@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
-using namespace std;
+using std::cout;
+using std::endl;
 
 /**
  * This struct describes a term in a polynomial with a link to
