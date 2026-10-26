@@ -16,8 +16,21 @@ private:
      * Create instance variables for any Nodes that we need to keep
      * track of
      */
-
      // YOUR CODE HERE
+    struct Node
+    {
+        string url;
+        Node* forward;
+        Node* backward;
+
+        Node(string u)
+        {
+            url = u;
+            forward = nullptr;
+            backward = nullptr;
+        }
+    };
+    Node* curr;
 
 public:
     
@@ -29,6 +42,7 @@ public:
     BrowserHistory(string homepage) 
     {
         // YOUR CODE HERE
+        curr = new Node(homepage);
     }
 
     /**
@@ -40,6 +54,16 @@ public:
     ~BrowserHistory()
     {
         // YOUR CODE HERE
+        while(curr != nullptr && curr->backward != nullptr)
+        {
+            curr = curr->backward;
+        }
+        while(curr != nullptr)
+        {
+            Node* temp = curr;
+            curr = curr->forward;
+            delete temp;
+        }
     }
     
     /**
@@ -48,7 +72,19 @@ public:
     void visit(string url) 
     {
         // YOUR CODE HERE
+        Node* temp = curr->forward;
+        while(temp != nullptr)
+        {
+            Node* nextPage = temp->forward;
+            delete temp;
+            temp = nextPage;
+        }
+        Node* newPage = new Node(url);
+        curr->forward = newPage;
+        newPage->backward = curr;
+        curr = newPage;
     }
+    
     
     /** 
      * Move steps back in history. If you can only move back x steps 
@@ -59,6 +95,15 @@ public:
     string back(int steps) 
     {
         // YOUR CODE HERE
+        for(int i = 0; i<steps; i++)
+        {
+            if(curr->backward == nullptr)
+            {
+                break;
+            }
+            curr = curr->backward;
+        }
+        return curr->url;
     }
 
     /** 
@@ -69,6 +114,15 @@ public:
     string forward(int steps) 
     {
         // YOUR CODE HERE
+        for(int i = 0; i<steps; i++)
+        {
+            if(curr->forward == nullptr)
+            {
+                break;
+            }
+            curr = curr->forward;
+        }
+        return curr->url;
     }
 };
 
@@ -81,4 +135,19 @@ int main()
     bh->visit("cppreference.com"); // go to cppreference (google 3 back in history)
     assert(bh->back(2) == "amazon.com"); // go back 2, should be at amazon
     assert(bh->forward(1) == "wikipedia.com"); // go forward 1, should be at wikipedia
+    
+    assert(bh->back(100) == "google.com");
+    assert(bh->forward(100) == "cppreference.com");
+    assert(bh->back(0) == "cppreference.com");
+    assert(bh->forward(0) == "cppreference.com");
+    BrowserHistory* bh2 = new BrowserHistory("school.com");
+    assert(bh2->back(1) == "school.com");
+    assert(bh2->forward(1) == "school.com");
+    assert(bh->back(2) == "amazon.com");
+    bh->visit("youtube.com");
+    assert(bh->forward(1) == "youtube.com");
+    assert(bh->back(1) == "amazon.com");
+    delete bh2;
+    delete bh;
+    cout<<"All test successfully comnpleted";
 }
